@@ -1,0 +1,133 @@
+# -----------------
+# Core Object Types
+# -----------------
+
+"""
+Represents a single entity or concept in the graph.
+"""
+type Node {
+    "A unique identifier for the node."
+    id: ID!
+
+    "The main title or name of the node."
+    title: String!
+
+    "An optional, more detailed description of the node."
+    description: String
+
+    "A list of all direct connections originating from or pointing to this node."
+    connections: [Connection!]!
+}
+
+"""
+Represents a directed link between two nodes.
+"""
+type Relationship {
+    "A unique identifier for the relationship itself."
+    id: ID!
+
+    "The type of the relationship (e.g., INSPIRED_BY, CONTRADICTS)."
+    type: RelationshipType!
+
+    "Optional notes or context about the relationship."
+    notes: String
+
+    "The source node of the relationship."
+    from: Node!
+
+    "The target node of the relationship."
+    to: Node!
+}
+
+"""
+A helper type that bundles a Relationship with the connected Node.
+This is used in the `Node.connections` field to provide full context for each link.
+"""
+type Connection {
+    "The relationship details (type, notes, etc.)."
+    relationship: Relationship!
+
+    "The node on the other end of this connection."
+    node: Node!
+}
+
+
+# -----------------
+# Enums
+# -----------------
+
+"""
+Defines the possible types for a relationship between two nodes.
+"""
+enum RelationshipType {
+    INSPIRED_BY
+    CONTRADICTS
+    SUPPORTS
+    RELATED_TO
+}
+
+
+# -----------------
+# Input Types for Mutations
+# -----------------
+
+"""
+Input for creating a new Node.
+"""
+input AddNodeInput {
+    "The title for the new node. Must not be empty."
+    title: String!
+
+    "An optional description for the new node."
+    description: String
+}
+
+"""
+Input for creating a new Relationship between two existing Nodes.
+"""
+input LinkNodesInput {
+    "The ID of the source node."
+    fromNodeId: ID!
+
+    "The ID of the target node."
+    toNodeId: ID!
+
+    "The type of relationship."
+    type: RelationshipType!
+
+    "Optional notes for the relationship."
+    notes: String
+}
+
+
+# -----------------
+# Root Operation Types
+# -----------------
+
+"""
+Defines all available queries.
+"""
+type Query {
+    "Retrieves a single node by its unique ID."
+    node(id: ID!): Node
+
+    "Searches for nodes by title (supports partial matching). Returns an empty list if no matches are found."
+    searchNodes(titleQuery: String!): [Node!]!
+}
+
+"""
+Defines all available mutations.
+"""
+type Mutation {
+    "Adds a new node to the graph."
+    addNode(input: AddNodeInput!): Node!
+
+    "Links two existing nodes together with a relationship."
+    linkNodes(input: LinkNodesInput!): Relationship!
+
+    "Deletes a node and all of its associated relationships. Returns the ID of the deleted node."
+    deleteNode(id: ID!): ID
+
+    "Deletes a single relationship between two nodes. Returns the ID of the deleted link."
+    deleteLink(id: ID!): ID
+}
