@@ -17,78 +17,108 @@ import java.util.List;
 @Controller
 public class GraphController {
 
-    // --- In-memory DAOs or @Autowired services for your database would go here ---
-    // private final NodeService nodeService;
-    // private final RelationshipService relationshipService;
+    private final com.andrew.knowledge_graph.repository.NodeRepository nodeRepository;
+    private final com.andrew.knowledge_graph.repository.RelationshipRepository relationshipRepository;
 
-    // ==============
-    // QUERIES
-    // ==============
+    public GraphController(com.andrew.knowledge_graph.repository.NodeRepository nodeRepository,
+                          com.andrew.knowledge_graph.repository.RelationshipRepository relationshipRepository) {
+        this.nodeRepository = nodeRepository;
+        this.relationshipRepository = relationshipRepository;
+    }
+
+    // Query methods
 
     @QueryMapping // Maps to the "node" query in the schema
     public Node node(@Argument String id) {
-        // return nodeService.findById(id);
-        System.out.println("Fetching node with ID: " + id);
-        return null; // Replace with actual data access logic
+        try {
+            Long nodeId = Long.parseLong(id);
+            return nodeRepository.findById(nodeId).orElse(null);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @QueryMapping // Maps to the "searchNodes" query
     public List<Node> searchNodes(@Argument String titleQuery) {
-        // return nodeService.searchByTitle(titleQuery);
-        System.out.println("Searching for nodes with title containing: " + titleQuery);
-        return List.of(); // Replace with actual data access logic
+        // Example: find all nodes containing the titleQuery in their title
+        return nodeRepository.findAll().stream()
+                .filter(node -> node.getTitle() != null && node.getTitle().toLowerCase().contains(titleQuery.toLowerCase()))
+                .toList();
     }
 
-    // ==============
-    // MUTATIONS
-    // ==============
+    // Mutation methods
 
     @MutationMapping // Maps to the "addNode" mutation
     public Node addNode(@Argument AddNodeInput input) {
-        // return nodeService.createNode(input.title(), input.description());
-        System.out.println("Adding node with title: " + input.title());
-        return null; // Replace with actual data access logic
+        Node node = new Node(input.title(), input.description());
+        return nodeRepository.save(node);
     }
 
     @MutationMapping // Maps to the "linkNodes" mutation
     public Relationship linkNodes(@Argument LinkNodesInput input) {
-        // return relationshipService.createLink(input);
-        System.out.println("Linking nodes: " + input.fromNodeId() + " -> " + input.toNodeId());
-        return null; // Replace with actual data access logic
+        Relationship relationship = new Relationship(
+                input.type(),
+                input.notes(),
+                Long.parseLong(input.fromNodeId()),
+                Long.parseLong(input.toNodeId())
+        );
+        return relationshipRepository.save(relationship);
     }
 
     @MutationMapping // Maps to the "deleteNode" mutation
     public String deleteNode(@Argument String id) {
-        // IMPORTANT: Your service logic here must also delete associated links.
-        // relationshipService.deleteLinksForNode(id);
-        // nodeService.deleteNode(id);
         System.out.println("Deleting node with ID: " + id);
-        return id;
+        try {
+            Long nodeId = Long.parseLong(id);
+            // Delete all relationships where this node is source or target
+            relationshipRepository.findByFromNodeId(nodeId).forEach(rel -> relationshipRepository.deleteById(rel.getId()));
+            relationshipRepository.findByToNodeId(nodeId).forEach(rel -> relationshipRepository.deleteById(rel.getId()));
+            // Delete the node itself
+            nodeRepository.deleteById(nodeId);
+            return id;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @MutationMapping // Maps to the "deleteLink" mutation
     public String deleteLink(@Argument String id) {
-        // relationshipService.deleteLink(id);
         System.out.println("Deleting link with ID: " + id);
-        return id;
+        try {
+            Long relId = Long.parseLong(id);
+            relationshipRepository.deleteById(relId);
+            return id;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
     
-    // ==============
-    // FIELD RESOLVER for Node.connections
-    // ==============
+    // Field resolvers for Nodes.connections
 
-    /**
-     * This method resolves the 'connections' field for a given Node object.
-     * Spring calls this whenever a query asks for the 'connections' field.
-     * The `Node` parameter is the parent object from which the field is being requested.
-     */
     @SchemaMapping(typeName = "Node", field = "connections")
     public List<Connection> getConnections(Node node) {
-        // return relationshipService.getConnectionsForNode(node.getId());
         System.out.println("Fetching connections for node: " + node.getId());
-        // This is where you query your database for all relationships
-        // connected to this node and build the List<Connection>.
-        return List.of(); // Replace with actual data access logic
+        Long nodeId = node.getId();
+        // Find all relationships where this node is either the source or target
+        List<Relationship> outgoing = relationshipRepository.findByFromNodeId(nodeId);
+        List<Relationship> incoming = relationshipRepository.findByToNodeId(nodeId);
+
+        // Build Connection objects for outgoing relationships
+        List<Connection> connections = new java.util.ArrayList<>();
+        for (Relationship rel : outgoing) {
+            Node target = nodeRepository.findById(rel.getToNodeId()).orElse(null);
+            if (target != null) {
+                connections.add(new Connection(rel, target));
+            }
+        }
+        // Build Connection objects for incoming relationships
+        for (Relationship rel : incoming) {
+            Node source = nodeRepository.findById(rel.getFromNodeId()).orElse(null);
+            if (source != null) {
+                connections.add(new Connection(rel, source));
+            }
+        }
+        return connections;
     }
 }
 
