@@ -13,6 +13,8 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.ArrayList;
+
 
 @Controller
 public class GraphController {
@@ -104,7 +106,7 @@ public class GraphController {
         List<Relationship> incoming = relationshipRepository.findByToNodeId(nodeId);
 
         // Build Connection objects for outgoing relationships
-        List<Connection> connections = new java.util.ArrayList<>();
+        List<Connection> connections = new ArrayList<>();
         for (Relationship rel : outgoing) {
             Node target = nodeRepository.findById(rel.getToNodeId()).orElse(null);
             if (target != null) {
