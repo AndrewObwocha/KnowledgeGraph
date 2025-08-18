@@ -35,3 +35,17 @@ out/
 
 ### VS Code ###
 .vscode/
+
+## Database files ##
+*.db
+*.sqlite
+*.sqlite3
+
+## MacOS specific files ##
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Log files ##
+*.log
+*.log.*
