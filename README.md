@@ -43,7 +43,7 @@ My vision is to make information consumption a compounding activity where knowle
 
 Contribution is not only welcome, but encouraged! Here are some ways you can contribute:
 
-- **Feature Requests** — You can send feature ideas by opening an issue with the tag feature-request.
+- **Feature requests** — You can send feature ideas by opening an issue with the tag feature-request.
 - **Bug reports** — You can report a bug by opening an issue with the tag bug
 - **Pull requests** — You can contribute directly by forking, coding, and submitting PRs!
 
