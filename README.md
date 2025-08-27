@@ -25,7 +25,7 @@ My vision is to make information consumption a compounding activity where knowle
 **Setup**
 1. **Clone the repository**
    ```sh
-   git clone https://github.com/{yourUsername}/KnowledgeGraph_Backend.git
+   git clone https://github.com/{yourUsername}/KnowledgeGraph.git
    cd KnowledgeGraph_Backend
    ```
 4. **Build the project**
@@ -54,4 +54,4 @@ This project is licensed under the MIT License.
 For further information, feel free to initiate contact:
 
 - **Email** — obwochandrew@gmail.com 
-- **Project Link** — https://github.com/AndrewObwocha/KnowledgeGraph_Backend
+- **Project Link** — https://github.com/AndrewObwocha/KnowledgeGraph
