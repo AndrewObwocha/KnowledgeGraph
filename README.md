@@ -1,4 +1,4 @@
-# Knowledge Graph Spring Boot Application
+# Knowledge Graph Web Application
 
 ## Welcome!
 KnowledgeGraph is a web application designed to make tracking information across domains. Leveraging a GraphQL API, this backend service provides flexible data manipulation and uses a local SQLite database to persist data. I aim to externalize information swirling in my mind to focus on analyzing their relationships.
