@@ -1,17 +1,20 @@
 # Knowledge Graph Spring Boot Application
 
 ## Welcome!
-KnowledgeGraph is a backend service for a web application designed to make tracking information across domains. Leveraging a GraphQL API, this backend service provides flexible data manipulation and uses a local SQLite database to persist data. I aim to externalize information swirling in my mind to focus on analyzing their relationships.
+KnowledgeGraph is a web application designed to make tracking information across domains. Leveraging a GraphQL API, this backend service provides flexible data manipulation and uses a local SQLite database to persist data. I aim to externalize information swirling in my mind to focus on analyzing their relationships.
 
 ## KnowledgeGraph's Vision
 My vision is to make information consumption a compounding activity where knowledge is predominantly interconnected in a network. Trying to internalize everything is a key limitation to scaling our knowledge, and this app is my solution to that.
 
 ## Features
+- **Graph Exploration** — Navigate a graph structure for seamless dynamic thought
+- **Searchability** — Search breadth of nodes for a specific piece of information
 - **CRUD node operations** — Create, Read, Update, Delete a particular node of information
 - **Node-relationship management** — Manage relationships between any 2 particular nodes, including support for multiple simultaneous relationships
 
 
 ## Technologies Used
+- **React** - Handles the user presentation and experience in the frontend
 - **GraphQL API** — Serves as a query and mutation handler between frontend and backend
 - **SpringBoot (Java)** — Implements the backend operations, including server logic, resolvers, ORMs, etc.
 - **SQLite Database** — Manages local data storage, including nodes and relationships
@@ -19,14 +22,15 @@ My vision is to make information consumption a compounding activity where knowle
 ## Setup & Running
 
 **Pre-Requisites**
-- Download and install Java 24 from the official website — https://www.java.com/en/download/manual.jsp
-- Download and install the Java Virtual Machine from Oracle — https://www.oracle.com/java/technologies/downloads/
+- Download and install Node.js from the official website — nodejs.org/en/download/
+- Download and install Java 24 from the official website — java.com/en/download/manual.jsp
+- Download and install the Java Virtual Machine from Oracle — oracle.com/java/technologies/downloads/
 
 **Setup**
 1. **Clone the repository**
    ```sh
    git clone https://github.com/{yourUsername}/KnowledgeGraph.git
-   cd KnowledgeGraph_Backend
+   cd KnowledgeGraph
    ```
 4. **Build the project**
 	 ```sh
