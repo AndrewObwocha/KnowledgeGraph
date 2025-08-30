@@ -30,48 +30,33 @@ const generateBlobPath = (radius = 50, numAnchors = 16, variance = 0.25) => {
 
 const Graph = ({ data }) => {
   const svgRef = useRef();
+  const gRef = useRef();  // Ref for the <g> element that holds nodes/links
   const simulationRef = useRef();
-  const [nodes, setNodes] = useState([]);
-  const [links, setLinks] = useState([]);
 
   useEffect(() => {
-    // Add a new attribute to each node object defininig their SVG path
-    const initialNodes = data.nodes.map(node => ({
-      ...node,
-      d: generateBlobPath()
-    }));
+    // Select the SVG and the groups for D3 to control
+    const svg = d3.select(svgRef.current);
+    const g = d3.select(gRef.current);
+    const linkG = g.select('.links');
+    const nodeG = g.select('.nodes');
 
-    // D3 Force Simulation Setup
-    simulationRef.current = d3.forceSimulation(initialNodes)
-      .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))  // Connect nodes with links and set link distance
-      .force("charge", d3.forceManyBody().strength(-300))  // All nodes repel each other
-      .force("center", d3.forceCenter(400, 300));  // All nodes attracted to center of SVG
+    // Create a new simulation if one doesn't exist
+    if (!simulationRef.current) {
+      simulationRef.current = d3.forceSimulation()
+        .force("link", d3.forceLink().id(d => d.id).distance(150))
+        .force("charge", d3.forceManyBody().strength(-300))
+        .force("center", d3.forceCenter(400, 300));
+    }
 
-    // Re-render on every tick of the simulation
-    simulationRef.current.on("tick", () => {
-      setNodes([...simulationRef.current.nodes()]);
-      setLinks([...data.links]);
-    });
+    // Update the simulation with new data
+    const simulation = simulationRef.current;
+    simulation.nodes(data.nodes);
+    simulation.force("link").links(data.links);
 
-    // Initialize state to trigger the first render
-    setNodes(initialNodes);
-    setLinks(data.links);
-
-    // Cleanup function to stop the simulation when the component unmounts
-    return () => {
-      simulationRef.current.stop();
-    };
-
-  }, [data]); // Dependency on `data` allows re-initialization if data changes
-
-
-  // Drag effect needs to be reapplied whenever nodes change
-  useEffect(() => {
-    if (nodes.length === 0) return;
-
+    // D3's drag behavior 
     const drag = d3.drag()
       .on("start", (event, d) => {
-        if (!event.active) simulationRef.current.alphaTarget(0.3).restart();
+        if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
       })
@@ -80,57 +65,62 @@ const Graph = ({ data }) => {
         d.fy = event.y;
       })
       .on("end", (event, d) => {
-        if (!event.active) simulationRef.current.alphaTarget(0);
+        if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
       });
-      
-    // Select nodes after rendering and reapply drag behavior
-    d3.select(svgRef.current)
-      .selectAll('.node-group')
-      .data(nodes, d => d.id)
-      .call(drag);
 
-  }, [nodes]); // Dependency on `nodes` ensures this runs after render
+    // Update links and nodes directly using D3 (avoid triggering React re-renders)
+    const link = linkG.selectAll("line")
+      .data(data.links, d => `${d.source.id}-${d.target.id}`)
+      .join("line")
+      .attr("class", "link");
 
-  return (
+    const node = nodeG.selectAll(".node-group")
+      .data(data.nodes, d => d.id)
+      .join(
+        enter => {
+          const g = enter.append("g")
+            .attr("class", "node-group")
+            .call(drag); // Apply drag behavior on enter
+          g.append("path")
+            .attr("class", (d, i) => `node-shape color-${i % 5}`)
+            .attr("d", () => generateBlobPath());
+          g.append("text")
+            .attr("class", "node-label")
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.3em")
+            .text(d => d.id);
+          return g;
+        },
+        update => update,
+        exit => exit.remove()
+      );
+
+    // Update element attributes directly, not React state on each tick
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+      node.attr("transform", d => `translate(${d.x}, ${d.y})`);
+    });
+
+    // Cleanup function to stop simulation when component unmounts
+    return () => simulation.stop();
+
+  }, [data]); // Re-run effect only when data changes
+
+    return (
     <svg ref={svgRef} width="800" height="600" className="graph-container">
-      <g className="links">
-        {links.map((link) => (
-          
-          (typeof link.source === 'object' && typeof link.target === 'object') && (
-            <line
-              key={`${link.source.id}-${link.target.id}`}
-              className="link"
-              x1={link.source.x}
-              y1={link.source.y}
-              x2={link.target.x}
-              y2={link.target.y}
-            />
-          )
-        ))}
-      </g>
-      <g className="nodes">
-        {nodes.map((node, i) => (
-          node.x && (
-            <g
-              key={node.id}
-              className="node-group"
-              transform={`translate(${node.x}, ${node.y})`}
-            >
-              <path
-                className={`node-shape color-${i % 5}`}
-                d={node.d}
-              />
-              <text className="node-label" textAnchor="middle" dy="0.3em">
-                {node.id}
-              </text>
-            </g>
-          )
-        ))}
+      <g ref={gRef}>
+        <g className="links"></g>
+        <g className="nodes"></g>
       </g>
     </svg>
   );
 };
+
 
 export default Graph;
