@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Sidebar from './components/Sidebar';
 import Graph from './components/Graph';
 import './styles/App.css';
@@ -25,12 +26,15 @@ const graphData = {
 
 
 function App() {
+    const [showSidebar, setShowSidebar] = useState(true);
+
   return (
     <div className="App">
-      <Sidebar />
-      <main>
-        <Graph data={graphData} />
-      </main>
+      <button className="toggle-sidebar" onClick={() => setShowSidebar((prev) => !prev)}>
+        {showSidebar ? "Hide Sidebar" : "Show Sidebar"}
+      </button>
+      {showSidebar && <Sidebar />}
+      <Graph data={graphData} sidebarVisible={showSidebar} />
     </div>
   );
 }

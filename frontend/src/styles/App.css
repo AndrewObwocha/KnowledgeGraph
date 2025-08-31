@@ -1,10 +1,22 @@
 .App {
   text-align: center;
-  background-color: white;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   color: white;
+}
+
+.toggle-sidebar {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  padding: 10px 15px;
+  background-color: #f4f4f4;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }

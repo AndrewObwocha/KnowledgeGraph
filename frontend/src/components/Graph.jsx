@@ -28,7 +28,7 @@ const generateBlobPath = (radius = 50, numAnchors = 16, variance = 0.25) => {
 };
 
 
-const Graph = ({ data }) => {
+const Graph = ({ data, sidebarVisible }) => {
   const svgRef = useRef();
   const gRef = useRef();  // Ref for the <g> element that holds nodes/links
   const simulationRef = useRef();
@@ -113,7 +113,11 @@ const Graph = ({ data }) => {
   }, [data]); // Re-run effect only when data changes
 
     return (
-    <svg ref={svgRef} width="800" height="600" className="graph-container">
+    <svg 
+      ref={svgRef} 
+      className="graph-container"
+      style={{ marginLeft: sidebarVisible ? 250 : 0 }} // Adjust margin based on sidebar visibility
+    >
       <g ref={gRef}>
         <g className="links"></g>
         <g className="nodes"></g>
