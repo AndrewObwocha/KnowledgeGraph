@@ -5,6 +5,16 @@ import Graph from "./pages/Graph"
 import Login from './pages/Login'
 import Register from './pages/Register'
 
+function Logout () {
+  localStorage.clear()
+  return <Navigate to='/login' />
+}
+
+function RegisterAndLogout() {
+  localStorage.clear()
+  return <Register />
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,7 +36,9 @@ function App() {
           } 
         />
         <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        <Route path='/logout' element={<Logout />} />
+        <Route path='/register' element={<RegisterAndLogout />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

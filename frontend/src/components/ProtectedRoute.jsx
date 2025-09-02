@@ -32,7 +32,7 @@ function ProtectedRoute({children}) {
         }
     }
 
-    
+    // Check if the user is authorized
     const auth = async () => {
         const token = localStorage.getItem(ACCESS_TOKEN)
         
@@ -55,7 +55,7 @@ function ProtectedRoute({children}) {
         return <div>Loading...</div>
     }
 
-    return isAuthorized ? children : <Navigate to='login'/>
+    return isAuthorized ? children : <Navigate to='/login'/>
 }
 
 export default ProtectedRoute
