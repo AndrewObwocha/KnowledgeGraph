@@ -116,7 +116,7 @@ const Graph = ({ data, sidebarVisible }) => {
     <svg 
       ref={svgRef} 
       className="graph-container"
-      style={{ marginLeft: sidebarVisible ? 250 : 0 }} // Adjust margin based on sidebar visibility
+      style={{ marginLeft: sidebarVisible ? 250 : 0 }}
     >
       <g ref={gRef}>
         <g className="links"></g>
