@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import '../styles/Graph.css';
 
@@ -33,7 +33,7 @@ const Graph = ({ data, sidebarVisible }) => {
   const gRef = useRef();  // Ref for the <g> element that holds nodes/links
   const simulationRef = useRef();
 
-  useEffect(() => {
+  useEffect(() => {        
     // Select the SVG and the groups for D3 to control
     const svg = d3.select(svgRef.current);
     const g = d3.select(gRef.current);
@@ -45,7 +45,7 @@ const Graph = ({ data, sidebarVisible }) => {
       simulationRef.current = d3.forceSimulation()
         .force("link", d3.forceLink().id(d => d.id).distance(150))
         .force("charge", d3.forceManyBody().strength(-300))
-        .force("center", d3.forceCenter(400, 300));
+        .force("center", d3.forceCenter(650, 400));
     }
 
     // Update the simulation with new data
