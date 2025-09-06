@@ -1,7 +1,9 @@
 import AuthForm from "../components/AuthForm";
 
 function Login() {
-    <AuthForm useCase="Login" />
+    return (
+        <AuthForm useCase="Login" />
+    );
 }
 
 export default Login;

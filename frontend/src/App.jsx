@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Graph from "./pages/Graph"
 import Login from './pages/Login'
 import Register from './pages/Register'
+import NotFound from './pages/NotFound'
 
 function Logout () {
   localStorage.clear()
