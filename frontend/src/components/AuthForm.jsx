@@ -1,19 +1,57 @@
+import { useState } from 'react';
 import '../styles/AuthForm.css';
 
-function AuthForm({ useCase }) {
+function AuthForm({ method, route }) {
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const methodName = method === 'login' ? 'Login' : 'Register';
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setLoading(true);
+    
+    try {
+      console.log('Form submitted:', { username, password });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  
   return (
-    <form className='auth-form'>
-      <h1>{ useCase }</h1>
-      <div className='input-group'>
-        <label htmlFor="username">Username: </label>
-        <input type="text" id="username" name="username" required />
-      </div>
-      <div className='input-group'>
-        <label htmlFor="password">Password: </label>
-        <input type="password" id="password" name="password" required />
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+    <>
+        <h1 className='form-title'>{ methodName }</h1>
+        <form 
+            className='auth-form'
+            onSubmit={(e) => handleSubmit(e)}
+        >
+            <input
+                className='form-input'
+                type='text'
+                value={username}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder='Username'
+                required
+            />
+            <input
+                className='form-input'
+                type='password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder='Password'
+                required
+            />
+            <button
+                className='form-button'
+                type='submit'
+            >
+                { methodName }
+            </button>
+        </form>
+    </>
   );
 }
 

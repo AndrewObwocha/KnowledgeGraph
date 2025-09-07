@@ -2,7 +2,10 @@ import AuthForm from "../components/AuthForm";
 
 function Register() {
     return (
-        <AuthForm useCase="Register" />
+        <AuthForm 
+            method="register"
+            route="/auth/register"
+        />
     );
 }
 

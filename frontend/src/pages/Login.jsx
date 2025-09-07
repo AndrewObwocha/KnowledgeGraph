@@ -2,7 +2,10 @@ import AuthForm from "../components/AuthForm";
 
 function Login() {
     return (
-        <AuthForm useCase="Login" />
+        <AuthForm 
+            method="login"
+            route="/auth/login"
+        />
     );
 }
 
