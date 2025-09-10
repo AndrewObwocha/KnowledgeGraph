@@ -3,13 +3,13 @@ package com.andrew.knowledge_graph.model;
 public class User {
     private Long id;
     private String username;
-    private String passwordHash;
+    private String password;
 
     public User() {}
 
-    public User(String username, String passwordHash) {
+    public User(String username, String password) {
         this.username = username;
-        this.passwordHash = passwordHash;
+        this.password = password;
     }
 
     public Long getId() {
@@ -28,11 +28,11 @@ public class User {
         this.username = username;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
     }
 }
