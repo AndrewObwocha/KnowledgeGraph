@@ -4,7 +4,7 @@ function Register() {
     return (
         <AuthForm 
             method="register"
-            route="/auth/register"
+            route="/api/auth/register"
         />
     );
 }

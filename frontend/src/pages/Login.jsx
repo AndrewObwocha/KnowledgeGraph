@@ -4,7 +4,7 @@ function Login() {
     return (
         <AuthForm 
             method="login"
-            route="/auth/login"
+            route="/api/auth/login"
         />
     );
 }
