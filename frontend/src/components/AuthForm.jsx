@@ -1,21 +1,33 @@
 import { useState } from 'react';
 import '../styles/AuthForm.css';
+import api from '../api';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
+import { useNavigate } from 'react-router-dom';
 
 function AuthForm({ method, route }) {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const methodName = method === 'login' ? 'Login' : 'Register';
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     
     try {
-      console.log('Form submitted:', { username, password });
+      const res = await api.post(route, { username, password });
+
+      if (method === 'login' && res.status === 200) {
+        localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refreshToken);
+        navigate('/');
+      } else if (method === 'register' && res.status === 200) {
+        navigate('/login');
+      }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      alert(error.response?.data?.error || 'Authentication failed');
     } finally {
       setLoading(false);
     }
