@@ -1,42 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from '../components/Sidebar';
 import Graph from './Graph';
+import api from '../api';
 import '../styles/Home.css';
-
-const graphData = {
-  nodes: [
-    { id: "Quantum Physics" },
-    { id: "Machine Learning" },
-    { id: "Neuroscience" },
-    { id: "Renewable Energy" },
-    { id: "Space Exploration" },
-    { id: "Ancient History" },
-    { id: "Fossils" },
-  ],
-  links: [
-    { source: "Quantum Physics", target: "Machine Learning" },
-    { source: "Neuroscience", target: "Machine Learning" },
-    { source: "Quantum Physics", target: "Space Exploration" },
-    { source: "Renewable Energy", target: "Space Exploration" },
-    { source: "Renewable Energy", target: "Neuroscience" },
-    { source: "Fossils", target: "Ancient History" },
-    { source: "Machine Learning", target: "Space Exploration" },
-  ]
-};
-
 
 function Home() {
     const [showSidebar, setShowSidebar] = useState(true);
+    const [graphData, setGraphData] = useState({ nodes: [], links: [] })        
+    
+    useEffect(() => {
+        async function fetchGraphData() {
+          try {
+              const query = `
+                  query {
+                    searchNodes(titleQuery: "") {
+                      id
+                      title
+                      description
+                      connections {
+                        relationship {
+                          id
+                          type
+                          notes
+                          fromNodeId
+                          toNodeId
+                        }
+                        node {
+                          id
+                          title
+                          description
+                        }
+                      }
+                    }
+                  }
+                `;
 
-  return (
-    <div className="Home">
-      <button className="toggle-sidebar" onClick={() => setShowSidebar((prev) => !prev)}>
-        {showSidebar ? "Hide Sidebar" : "Show Sidebar"}
-      </button>
-      {showSidebar && <Sidebar />}
-      <Graph data={graphData} sidebarVisible={showSidebar} />
-    </div>
-  );
+                const res = await api.post('/graphql', { query });
+                const nodesRaw = res.data.data.searchNodes;
+
+                const nodes = nodesRaw.map(node => ({
+                    id: node.id,
+                    title: node.title,
+                    description: node.description
+                }));
+
+                const links = [];
+                nodesRaw.forEach(node => {
+                    node.connections.forEach(conn => {
+                        links.push({
+                            source: node.id,
+                            target: conn.node.id,
+                            type: conn.relationship.type,
+                            notes: conn.relationship.notes
+                        });
+                    });
+                });
+
+                setGraphData({ nodes, links });
+            setGraphData(res.data);
+          } catch (error) {
+            console.error("Failed to fetch graph data:", error);
+          }
+        }
+        fetchGraphData();
+    }, []);
+    
+    return (
+        <div className="Home">
+            <button className="toggle-sidebar" onClick={() => setShowSidebar((prev) => !prev)}>
+              {showSidebar ? "Hide Sidebar" : "Show Sidebar"}
+            </button>
+            {showSidebar && <Sidebar />}
+            <Graph data={graphData} sidebarVisible={showSidebar} />
+        </div>
+    );
 }
 
 export default Home;
