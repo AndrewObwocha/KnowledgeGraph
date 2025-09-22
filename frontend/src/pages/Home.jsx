@@ -63,6 +63,29 @@ function Home() {
     fetchGraphData();
   }, []);
 
+  const handleAddNode = () => {
+    const newNode = {
+      title: `New Node ${graphData.nodes.length + 1}`,
+      description: "This is a newly added node.",
+    };
+    setGraphData((prevData) => ({
+      nodes: [...prevData.nodes, { id: `temp-${Date.now()}`, ...newNode }],
+      links: prevData.links,
+    }));
+
+    // Send mutation to backend to create the new node
+    const mutation = `
+      mutation {
+        createNode(title: "${newNode.title}", description: "${newNode.description}") {
+          id
+          title
+          description
+        }
+      }
+    `;
+    api.post("/graphql", { query: mutation });
+  };
+
   return (
     <div className="Home">
       <button
@@ -73,6 +96,9 @@ function Home() {
       </button>
       {showSidebar && <Sidebar />}
       <Graph data={graphData} sidebarVisible={showSidebar} />
+      <button className="add-node-button" onClick={() => handleAddNode()}>
+        Add Node
+      </button>
     </div>
   );
 }
