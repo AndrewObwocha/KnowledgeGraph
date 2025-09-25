@@ -21,7 +21,7 @@
   cursor: pointer;
 }
 
-.add-node-button {
+.create-node {
   position: absolute;
   bottom: 20px;
   right: 20px;
@@ -34,6 +34,15 @@
   cursor: pointer;
 }
 
-.add-node-button:hover {
+.create-node {
   background-color: #45a049;
+}
+
+.node-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translation(-50%, -50%);
+  width: 300px;
+  height: 50%;
 }

@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import Graph from "./Graph";
+import Graph from "../components/Graph";
 import api from "../api";
 import "../styles/Home.css";
 
 function Home() {
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showAddNodeForm, setShowAddNodeForm] = useState(false);
+
+  const [newNodeTitle, setNewNodeTitle] = useState("");
+  const [newNodeNotes, setNewNodeNotes] = useState("");
+
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
 
   useEffect(() => {
@@ -63,28 +68,34 @@ function Home() {
     fetchGraphData();
   }, []);
 
-  const handleAddNode = () => {
-    const newNode = {
-      title: `New Node ${graphData.nodes.length + 1}`,
-      description: "This is a newly added node.",
-    };
-    setGraphData((prevData) => ({
-      nodes: [...prevData.nodes, { id: `temp-${Date.now()}`, ...newNode }],
-      links: prevData.links,
-    }));
+  async function handleAddNode(e) {
+    try {
+      e.preventDefault();
 
-    // Send mutation to backend to create the new node
-    const mutation = `
-      mutation {
-        createNode(title: "${newNode.title}", description: "${newNode.description}") {
-          id
-          title
-          description
+      const mutationString = `
+        mutation AddNode($newNodeTitle: Str!, $newNodeNotes: Str!) {
+          addNode(title: $newNodeTitle, description: $newNodeNotes) {
+            id
+            title
+          }
         }
+      `;
+
+      const response = await api.post("/graphql", { mutationString });
+      const confirmationData = await response.json();
+
+      if (confirmationData.errors) {
+        console.error("GraphQL Errors:", confirmationData.errors);
+      } else {
+        alert(
+          `New player created with ID: ${confirmationData.data.addNode.id}`
+        );
       }
-    `;
-    api.post("/graphql", { query: mutation });
-  };
+      console.log(result);
+    } catch (error) {
+      console.error("Network or API call error:", error);
+    }
+  }
 
   return (
     <div className="Home">
@@ -94,11 +105,38 @@ function Home() {
       >
         {showSidebar ? "Hide Sidebar" : "Show Sidebar"}
       </button>
+
       {showSidebar && <Sidebar />}
+
       <Graph data={graphData} sidebarVisible={showSidebar} />
-      <button className="add-node-button" onClick={() => handleAddNode()}>
+
+      <button className="create-node" onClick={() => setShowAddNodeForm(true)}>
         Add Node
       </button>
+
+      {showAddNodeForm && (
+        <form className="node-form" onSubmit={(event) => handleAddNode(event)}>
+          <label for="title">Title: </label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            value={newNodeTitle}
+            onChange={(event) => setNewNodeTitle(event.target.value)}
+          />
+
+          <label for="notes">Content: </label>
+          <input
+            id="notes"
+            type="textarea"
+            name="notes"
+            value={newNodeNotes}
+            onChange={(event) => setNewNodeNotes(event.target.value)}
+          />
+
+          <input id="submit" type="submit" />
+        </form>
+      )}
     </div>
   );
 }
