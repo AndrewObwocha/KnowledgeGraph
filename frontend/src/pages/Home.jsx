@@ -73,16 +73,26 @@ function Home() {
       e.preventDefault();
 
       const mutationString = `
-        mutation AddNode($newNodeTitle: Str!, $newNodeNotes: Str!) {
-          addNode(title: $newNodeTitle, description: $newNodeNotes) {
+        mutation AddNode($title: String!, $description: String!) {
+          addNode(input: { title: $title, description: $description }) {
             id
             title
+            description
           }
         }
       `;
 
-      const response = await api.post("/graphql", { mutationString });
-      const confirmationData = await response.json();
+      const variables = {
+        title: newNodeTitle,
+        description: newNodeNotes,
+      };
+
+      const response = await api.post("/graphql", {
+        mutationString,
+        variables,
+      });
+
+      const confirmationData = await response.data;
 
       if (confirmationData.errors) {
         console.error("GraphQL Errors:", confirmationData.errors);
@@ -92,6 +102,10 @@ function Home() {
         );
       }
       console.log(result);
+
+      setShowAddNodeForm(false);
+      setNewNodeTitle("");
+      setNewNodeNotes("");
     } catch (error) {
       console.error("Network or API call error:", error);
     }
@@ -115,27 +129,60 @@ function Home() {
       </button>
 
       {showAddNodeForm && (
-        <form className="node-form" onSubmit={(event) => handleAddNode(event)}>
-          <label for="title">Title: </label>
-          <input
-            id="title"
-            type="text"
-            name="title"
-            value={newNodeTitle}
-            onChange={(event) => setNewNodeTitle(event.target.value)}
-          />
+        <div className="overlay" onClick={() => setShowAddNodeForm(false)}>
+          <div className="node-form" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="node-form-close"
+              onClick={() => setShowAddNodeForm(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
 
-          <label for="notes">Content: </label>
-          <input
-            id="notes"
-            type="textarea"
-            name="notes"
-            value={newNodeNotes}
-            onChange={(event) => setNewNodeNotes(event.target.value)}
-          />
+            <h3>Add Node</h3>
 
-          <input id="submit" type="submit" />
-        </form>
+            <form onSubmit={handleAddNode}>
+              <label>
+                Title
+                <input
+                  value={newNodeTitle}
+                  onChange={(e) => setNewNodeTitle(e.target.value)}
+                  placeholder="Node title"
+                  required
+                />
+              </label>
+
+              <label>
+                Content
+                <textarea
+                  value={newNodeNotes}
+                  onChange={(e) => setNewNodeNotes(e.target.value)}
+                  placeholder="Node content"
+                  rows={6}
+                  required
+                />
+              </label>
+
+              <div className="node-form-actions">
+                <button
+                  type="submit"
+                  className="btn primary"
+                  onClick={(e) => handleAddNode(e)}
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => setShowAddNodeForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

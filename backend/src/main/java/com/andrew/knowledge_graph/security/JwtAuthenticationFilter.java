@@ -56,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("SUCCESS: JWT is valid. Authenticated user '" + userDetails.getUsername() + "' and set SecurityContext with authorities: " + authToken.getAuthorities());
             }
         }
         

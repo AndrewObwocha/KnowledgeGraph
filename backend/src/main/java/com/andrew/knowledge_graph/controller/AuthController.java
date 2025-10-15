@@ -1,7 +1,9 @@
 package com.andrew.knowledge_graph.controller;
 
+import com.andrew.knowledge_graph.repository.RoleRepository;
 import com.andrew.knowledge_graph.repository.UserRepository;
 import com.andrew.knowledge_graph.util.JwtUtil;
+import com.andrew.knowledge_graph.model.Role;
 import com.andrew.knowledge_graph.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -38,9 +44,15 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
         }
         
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Error: Default role not found."));
+        
+
         final User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(Set.of(userRole));
+
         userRepository.save(user);
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }

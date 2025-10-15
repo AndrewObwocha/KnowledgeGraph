@@ -37,6 +37,7 @@ out/
 .vscode/
 
 ## Database files ##
+manage.sql
 *.db
 *.sqlite
 *.sqlite3

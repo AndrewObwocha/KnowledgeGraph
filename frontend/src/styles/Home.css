@@ -25,24 +25,80 @@
   position: absolute;
   bottom: 20px;
   right: 20px;
-  z-index: 10;
+  z-index: 1000;
   padding: 10px 15px;
-  background-color: #000000;
+  background-color: #45a049;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.create-node {
-  background-color: #45a049;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
 }
 
 .node-form {
+  background: #ffffff;
+  color: #111;
+  width: 420px;
+  max-width: 90%;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.node-form-close {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translation(-50%, -50%);
-  width: 300px;
-  height: 50%;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+}
+
+.node-form input,
+.node-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #111;
+}
+
+.node-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f4f4f4;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: gray;
+  color: #091426;
+  border: none;
 }

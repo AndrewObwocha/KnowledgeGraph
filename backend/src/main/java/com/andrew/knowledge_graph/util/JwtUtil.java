@@ -16,12 +16,12 @@ public class JwtUtil {
     private final long accessTokenValidity = 1000 * 60 * 15; // 15 minutes
     private final long refreshTokenValidity = 1000 * 60 * 60 * 24; // 24 hours
     private final Key key = Jwts.SIG.HS256.key().build();
-    private final String EXPECTED_ISSUER = "https://localhost:8000";
-    private final String EXPECTED_AUDIENCE = "https://localhost:5173";
+    private final String EXPECTED_ISSUER = "https://localhost:8080";
 
     public String generateAccessToken(String username) {
         return Jwts.builder()
                 .subject(username)
+                .issuer(EXPECTED_ISSUER)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenValidity))
                 .signWith(key)
@@ -39,30 +39,36 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token, String username) {
         try {
-            Jwts.parser()
-                    .verifyWith((SecretKey) key)
-                    .requireSubject(username)
-                    .requireIssuer(EXPECTED_ISSUER)
-                    .requireAudience(EXPECTED_AUDIENCE)
-                    .build()
-                    .parseSignedClaims(token);
-            
-            return true;
-
+            String subject = extractClaim(token, "sub");
+            return username.equals(subject) && !isTokenExpired(token);
         } catch (JwtException e) {
             return false;
         }
     }
 
-    public String extractClaim (String token, String claim) {
+    private boolean isTokenExpired(String token) {
+        Date expiration = Jwts.parser()
+                                .verifyWith((SecretKey) key)
+                                .requireIssuer(EXPECTED_ISSUER)
+                                .build()
+                                .parseSignedClaims(token)
+                                .getPayload()
+                                .getExpiration();
+        
+                                return expiration.before(new Date());
+    }
+
+    public String extractClaim (String token, String claimKey) {
         try {
             return Jwts.parser()
                     .verifyWith((SecretKey) key)
+                    .requireIssuer(EXPECTED_ISSUER)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload()
-                    .get(claim, String.class);
+                    .get(claimKey, String.class);
         } catch (JwtException e) {
+            System.err.println("Failed to extract claim '" + claimKey + "'. Error: " + e.getMessage());
             return null;
         }
     }
