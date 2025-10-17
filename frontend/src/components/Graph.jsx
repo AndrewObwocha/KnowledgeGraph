@@ -97,7 +97,7 @@ const Graph = ({ data, sidebarVisible }) => {
             .attr("class", "node-label")
             .attr("text-anchor", "middle")
             .attr("dy", "0.3em")
-            .text((d) => d.id);
+            .text((d) => d.title);
           return g;
         },
         (update) => update,

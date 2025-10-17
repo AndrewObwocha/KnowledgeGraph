@@ -17,28 +17,32 @@ function Home() {
     async function fetchGraphData() {
       try {
         const query = `
-                    query {
-                        searchNodes(titleQuery: "") {
-                            id
-                            title
-                            description
-                            connections {
-                                relationship {
+                query {
+                    searchNodes(titleQuery: "") {
+                        id
+                        title
+                        description
+                        connections {
+                            relationship {
+                                id
+                                type
+                                notes
+                                from {
                                     id
-                                    type
-                                    notes
-                                    fromNodeId
-                                    toNodeId
                                 }
-                                node {
+                                to {
                                     id
-                                    title
-                                    description
                                 }
+                            }
+                            node {
+                                id
+                                title
+                                description
                             }
                         }
                     }
-                `;
+                }
+            `;
         const res = await api.post("/graphql", { query });
         const nodesRaw = res.data.data.searchNodes;
 
@@ -88,7 +92,7 @@ function Home() {
       };
 
       const response = await api.post("/graphql", {
-        mutationString,
+        query: mutationString,
         variables,
       });
 
@@ -96,18 +100,20 @@ function Home() {
 
       if (confirmationData.errors) {
         console.error("GraphQL Errors:", confirmationData.errors);
+        alert("Error creating node. See console for details.");
       } else {
         alert(
           `New player created with ID: ${confirmationData.data.addNode.id}`
         );
+        console.log("Success:", confirmationData.data);
       }
-      console.log(result);
 
       setShowAddNodeForm(false);
       setNewNodeTitle("");
       setNewNodeNotes("");
     } catch (error) {
       console.error("Network or API call error:", error);
+      alert("A network error occurred. Please try again.");
     }
   }
 

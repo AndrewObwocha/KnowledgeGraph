@@ -8,27 +8,32 @@ import com.andrew.knowledge_graph.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    private UserRepository userRepository;
+    private AuthenticationManager authenticationManager; // For /login
 
     @Autowired
-    private RoleRepository roleRepository;
+    private JwtUtil jwtUtil; // For /login and /refresh
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private UserRepository userRepository; // For /register
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository; // For /register
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // For /register
 
     @PostMapping("/register")
     /**
@@ -66,18 +71,22 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {  
         final String username = request.get("username");
         final String password = request.get("password");
-        final Optional<User> userOpt = userRepository.findByUsername(username);
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+            );
         
-        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
+            final String accessToken = jwtUtil.generateAccessToken(authentication.getName());
+            final String refreshToken = jwtUtil.generateRefreshToken(authentication.getName());
+
+            return ResponseEntity.ok(Map.of(
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+            ));
+        } catch (Exception ex) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
-        
-        final String accessToken = jwtUtil.generateAccessToken(username);
-        final String refreshToken = jwtUtil.generateRefreshToken(username);
-        return ResponseEntity.ok(Map.of(
-            "accessToken", accessToken,
-            "refreshToken", refreshToken
-        ));
     }
 
     @PostMapping("/refresh")

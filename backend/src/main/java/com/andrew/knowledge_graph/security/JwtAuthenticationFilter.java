@@ -61,5 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         
         filterChain.doFilter(request, response);
+
+        System.out.println("[JwtFilter - AFTER] ... Final Response Status: " + response.getStatus());
     }
 }
