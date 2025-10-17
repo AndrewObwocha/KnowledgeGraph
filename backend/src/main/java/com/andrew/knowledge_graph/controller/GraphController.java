@@ -97,6 +97,16 @@ public class GraphController {
     
     // Field resolvers for Nodes.connections
 
+    @SchemaMapping(typeName = "Relationship", field = "from")
+    public Node getFromNode(Relationship relationship) {
+        return nodeRepository.findById(relationship.getFromNodeId()).orElse(null);
+    }
+
+    @SchemaMapping(typeName = "Relationship", field = "to")
+    public Node getToNode(Relationship relationship) {
+        return nodeRepository.findById(relationship.getToNodeId()).orElse(null);
+    }
+
     @SchemaMapping(typeName = "Node", field = "connections")
     public List<Connection> getConnections(Node node) {
         System.out.println("Fetching connections for node: " + node.getId());
