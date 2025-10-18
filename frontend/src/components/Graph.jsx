@@ -27,7 +27,7 @@ const generateBlobPath = (radius = 50, numAnchors = 16, variance = 0.25) => {
   return d3.line().curve(d3.curveCatmullRomClosed)(points);
 };
 
-const Graph = ({ data, sidebarVisible }) => {
+const Graph = ({ data }) => {
   const svgRef = useRef();
   const gRef = useRef(); // Ref for the <g> element that holds nodes/links
   const simulationRef = useRef();
@@ -119,11 +119,7 @@ const Graph = ({ data, sidebarVisible }) => {
   }, [data]); // Re-run effect only when data changes
 
   return (
-    <svg
-      ref={svgRef}
-      className="graph-container"
-      style={{ marginLeft: sidebarVisible ? 250 : 0 }}
-    >
+    <svg ref={svgRef} className="graph-container">
       <g ref={gRef}>
         <g className="links"></g>
         <g className="nodes"></g>

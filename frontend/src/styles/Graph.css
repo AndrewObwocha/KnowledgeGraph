@@ -1,8 +1,7 @@
 .graph-container {
-  background-color: #1a1a2e;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-color: #efefef;
+  background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+    linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
   background-size: 40px 40px;
   border-radius: 8px;
   overflow: hidden;
@@ -11,12 +10,8 @@
 }
 
 .link {
-  stroke: #00ffff;
-  stroke-opacity: 0.3;
+  stroke: black;
   stroke-width: 1.5px;
-  filter: 
-    drop-shadow(0 0 1px #00ffff)
-    drop-shadow(0 0 3px #00ffff);
 }
 
 .node-group {
@@ -28,7 +23,6 @@
 }
 
 .node-shape {
-  fill-opacity: 0.1;
   stroke-width: 2px;
 }
 
@@ -41,27 +35,22 @@
 
 /* Define some colors for the nodes */
 .color-0 {
-  stroke: #00e5ff;
-  fill: #00e5ff;
-  filter: drop-shadow(0 0 5px #00e5ff) drop-shadow(0 0 10px #00e5ff);
+  stroke: black;
+  fill: #2781ad;
 }
 .color-1 {
-  stroke: #a855f7;
+  stroke: black;
   fill: #a855f7;
-  filter: drop-shadow(0 0 5px #a855f7) drop-shadow(0 0 10px #a855f7);
 }
 .color-2 {
-  stroke: #34d399;
+  stroke: black;
   fill: #34d399;
-  filter: drop-shadow(0 0 5px #34d399) drop-shadow(0 0 10px #34d399);
 }
 .color-3 {
-  stroke: #60a5fa;
+  stroke: black;
   fill: #60a5fa;
-  filter: drop-shadow(0 0 5px #60a5fa) drop-shadow(0 0 10px #60a5fa);
 }
 .color-4 {
-  stroke: #f472b6;
+  stroke: black;
   fill: #f472b6;
-  filter: drop-shadow(0 0 5px #f472b6) drop-shadow(0 0 10px #f472b6);
 }

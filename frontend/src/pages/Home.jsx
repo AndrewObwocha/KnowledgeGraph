@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import Graph from "../components/Graph";
 import api from "../api";
 import "../styles/Home.css";
@@ -164,16 +164,9 @@ function Home() {
 
   return (
     <div className="Home">
-      <button
-        className="toggle-sidebar"
-        onClick={() => setShowSidebar((prev) => !prev)}
-      >
-        {showSidebar ? "Hide Sidebar" : "Show Sidebar"}
-      </button>
+      <Navbar />
 
-      {showSidebar && <Sidebar />}
-
-      <Graph data={graphData} sidebarVisible={showSidebar} />
+      <Graph data={graphData} />
 
       <button className="create-node" onClick={() => setShowAddNodeForm(true)}>
         Add Node

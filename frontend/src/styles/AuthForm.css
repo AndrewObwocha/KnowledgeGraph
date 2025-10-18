@@ -1,51 +1,90 @@
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: sans-serif;
+  background-color: white;
+}
+
+.auth-form-container {
+  background-color: #efefef;
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid black;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+.auth-form-container:hover {
+  transform: scale(1.02);
 }
 
 .form-title {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #f4f4f4;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #212529;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #495057;
 }
 
 .form-input {
-    margin-bottom: 15px;
-    padding: 10px;
-    font-size: 16px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: 1px solid #adb5bd;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 15px;
 }
 
 .form-button {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    box-sizing: border-box;
-    user-select: none;
-}
-    
-.form-button:hover {
-    background-color: #0056b3;
-    color: white;
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
+.form-button:hover {
+  opacity: 0.9;
+}
+
+.form-button.cancel-button + .form-button {
+  background-color: #2781ad;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #fff;
+  color: #495057;
+  border: 1px solid #adb5bd;
+}
