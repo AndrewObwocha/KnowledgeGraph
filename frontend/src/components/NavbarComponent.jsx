@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../styles/Navbar.css";
+import styles from "../styles/component_styles/NavbarComponent.module.css";
 
-const Navbar = () => {
+const NavbarComponent = () => {
   const [activeLink, setActiveLink] = useState("Graph View");
 
   const handleLinkClick = (linkName) => {
@@ -11,17 +11,19 @@ const Navbar = () => {
   const navLinks = ["Graph View", "Table View", "User Profile"];
 
   return (
-    <header className="navbar-header">
-      <nav className="navbar">
-        <div className="navbar-brand">
-          <a href="#">GraphMind</a>
+    <header className={styles.navbarHeader}>
+      <nav className={styles.navbar}>
+        <div className={styles.navbarBrand}>
+          <a href="">GraphMind</a>
         </div>
-        <ul className="navbar-links">
+        <ul className={styles.navbarLinks}>
           {navLinks.map((link) => (
             <li key={link}>
               <a
-                href="#"
-                className={activeLink === link ? "active" : ""}
+                href=""
+                className={`${styles.navbarLink} ${
+                  activeLink === link ? styles.active : ""
+                }`}
                 onClick={() => handleLinkClick(link)}
               >
                 {link}
@@ -34,4 +36,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarComponent;

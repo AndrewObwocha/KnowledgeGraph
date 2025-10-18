@@ -1,13 +1,4 @@
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: sans-serif;
-  background-color: white;
-}
-
-.auth-form-container {
+.authFormContainer {
   background-color: #efefef;
   padding: 40px;
   border-radius: 20px;
@@ -18,11 +9,11 @@ body {
   transition: transform 0.3s ease-in-out;
 }
 
-.auth-form-container:hover {
+.authFormContainer:hover {
   transform: scale(1.02);
 }
 
-.form-title {
+.formTitle {
   text-align: center;
   font-size: 2.25rem;
   font-weight: bold;
@@ -30,24 +21,24 @@ body {
   color: #212529;
 }
 
-.auth-form {
+.authForm {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.form-group {
+.formGroup {
   display: flex;
   flex-direction: column;
 }
 
-.form-label {
+.formLabel {
   margin-bottom: 8px;
   font-size: 1rem;
   color: #495057;
 }
 
-.form-input {
+.formInput {
   padding: 12px 20px;
   border-radius: 50px;
   border: 1px solid #adb5bd;
@@ -55,7 +46,7 @@ body {
   background-color: #fff;
 }
 
-.form-buttons {
+.formButtons {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,7 +54,7 @@ body {
   gap: 15px;
 }
 
-.form-button {
+.formButton {
   flex: 1;
   padding: 12px 20px;
   border-radius: 50px;
@@ -74,16 +65,16 @@ body {
   transition: opacity 0.2s;
 }
 
-.form-button:hover {
+.formButton:hover {
   opacity: 0.9;
 }
 
-.form-button.cancel-button + .form-button {
+.formButton.cancelButton + .formButton {
   background-color: #2781ad;
   color: white;
 }
 
-.cancel-button {
+.cancelButton {
   background-color: #fff;
   color: #495057;
   border: 1px solid #adb5bd;

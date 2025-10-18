@@ -1,10 +1,10 @@
 import { useState } from "react";
-import "../styles/AuthForm.css";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import styles from "../styles/component_styles/AuthFormComponent.module.css";
+import api from "../helpers/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../helpers/constants";
 import { useNavigate } from "react-router-dom";
 
-function AuthForm({ method, route }) {
+function AuthFormComponent({ method, route }) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ function AuthForm({ method, route }) {
       if (method === "login" && res.status === 200) {
         localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
         localStorage.setItem(REFRESH_TOKEN, res.data.refreshToken);
-        navigate("/");
+        navigate("/graphview");
       } else if (method === "register" && res.status === 200) {
         navigate("/login");
       }
@@ -34,41 +34,44 @@ function AuthForm({ method, route }) {
   }
 
   return (
-    <div className="auth-form-container">
-      <h1 className="form-title"> {methodName} </h1>
-      <form className="auth-form" onSubmit={(e) => handleSubmit(e)}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="username">
+    <div className={styles.authFormContainer}>
+      <h1 className={styles.formTitle}> {methodName} </h1>
+      <form className={styles.authForm} onSubmit={(e) => handleSubmit(e)}>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel} htmlFor="username">
             Username
           </label>
           <input
             id="username"
-            className="form-input"
+            className={styles.formInput}
             type="text"
             value={username}
             onChange={(e) => setUserName(e.target.value)}
             required
           />
         </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="password">
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel} htmlFor="password">
             Password
           </label>
           <input
             id="password"
-            className="form-input"
+            className={styles.formInput}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <div className="form-buttons">
-          <button type="button" className="form-button cancel-button">
+        <div className={styles.formButtons}>
+          <button
+            type="button"
+            className={`${styles.formButton} ${styles.cancelButton}`}
+          >
             Cancel
           </button>
-          <button className="form-button" type="submit">
-            Register
+          <button className={styles.formButton} type="submit">
+            {methodName} {/* It's better to use the dynamic methodName here */}
           </button>
         </div>
       </form>
@@ -76,4 +79,4 @@ function AuthForm({ method, route }) {
   );
 }
 
-export default AuthForm;
+export default AuthFormComponent;

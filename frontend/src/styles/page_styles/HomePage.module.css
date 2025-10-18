@@ -1,0 +1,81 @@
+/*
+  This is the main container that centers everything on the page.
+  It uses flexbox to align all children vertically and horizontally.
+*/
+.homepageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+/*
+  Styles for the SVG logo.
+  Sets a fixed size and adds space below it.
+*/
+.homepageLogo {
+  width: 260px;
+  height: 260px;
+  margin-bottom: 2rem;
+}
+
+/*
+  Styles for the main title.
+*/
+.homepageTitle {
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
+
+/*
+  Styles for the subtitle.
+*/
+.homepageSubtitle {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 2.5rem;
+}
+
+/*
+  This container holds the two buttons and adds space between them.
+*/
+.homepageActions {
+  display: flex;
+  gap: 1rem;
+}
+
+/*
+  Shared styles for both buttons.
+  This includes padding, border-radius for the pill shape, and font styles.
+*/
+.btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/*
+  Specific styles for the button colors.
+  Both buttons share the same background color in this design.
+*/
+.btnPrimary,
+.btnSecondary {
+  background: #2781ad; /* Changed from background-color */
+  color: white;
+}
+/*
+  A subtle hover effect that lifts the button slightly and adds a shadow.
+*/
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

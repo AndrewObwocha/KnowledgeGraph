@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
-import Navbar from "../components/Navbar";
-import Graph from "../components/Graph";
-import api from "../api";
-import "../styles/Home.css";
+import NavbarComponent from "../components/NavbarComponent";
+import GraphComponent from "../components/GraphComponent";
+import api from "../helpers/api";
+import styles from "../styles/page_styles/GraphPage.module.css";
 
-function Home() {
-  const [showSidebar, setShowSidebar] = useState(true);
+function GraphPage() {
   const [showAddNodeForm, setShowAddNodeForm] = useState(false);
-
   const [newNodeTitle, setNewNodeTitle] = useState("");
   const [newNodeNotes, setNewNodeNotes] = useState("");
-
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
-
   const [selectedLinkIds, setSelectedLinkIds] = useState([]);
 
   const fetchGraphData = useCallback(async () => {
@@ -28,12 +24,8 @@ function Home() {
                 id
                 type
                 notes
-                from {
-                  id
-                }
-                to {
-                  id
-                }
+                from { id }
+                to { id }
               }
               node {
                 id
@@ -45,20 +37,16 @@ function Home() {
         }
       `;
       const res = await api.post("/graphql", { query });
-
       if (res.data.errors) {
         console.error("Failed to fetch graph data:", res.data.errors);
         return;
       }
-
       const nodesRaw = res.data.data.searchNodes;
-
       const nodes = nodesRaw.map((node) => ({
         id: node.id,
         title: node.title,
         description: node.description,
       }));
-
       const links = [];
       nodesRaw.forEach((node) => {
         node.connections.forEach((conn) => {
@@ -75,7 +63,6 @@ function Home() {
           }
         });
       });
-
       setGraphData({ nodes, links });
     } catch (error) {
       console.error("Failed to fetch graph data:", error);
@@ -87,9 +74,8 @@ function Home() {
   }, [fetchGraphData]);
 
   async function handleAddNode(e) {
+    e.preventDefault();
     try {
-      e.preventDefault();
-
       const mutationString = `
         mutation AddNode($title: String!, $description: String!) {
           addNode(input: { title: $title, description: $description }) {
@@ -99,53 +85,59 @@ function Home() {
           }
         }
       `;
-
-      const variables = {
-        title: newNodeTitle,
-        description: newNodeNotes,
-      };
-
+      const variables = { title: newNodeTitle, description: newNodeNotes };
       const response = await api.post("/graphql", {
         query: mutationString,
         variables,
       });
 
       const confirmationData = response.data;
-
       if (confirmationData.errors) {
         console.error("GraphQL Errors:", confirmationData.errors);
         alert("Error creating node. See console for details.");
-      } else {
-        const newId = confirmationData.data.addNode.id;
-        if (selectedLinkIds.length > 0) {
-          const linkMutation = `
+        return; // Exit if there's an error
+      }
+
+      const newNode = confirmationData.data.addNode;
+      let newLinks = [];
+
+      // Link to existing nodes if any are selected
+      if (selectedLinkIds.length > 0) {
+        const linkMutation = `
           mutation LinkNodes($fromId: ID!, $toId: ID!, $type: RelationshipType!) {
             linkNodes(input: { fromNodeId: $fromId, toNodeId: $toId, type: $type }) {
-              id # Request the ID of the new relationship
+              id
             }
           }
         `;
-
-          for (const toId of selectedLinkIds) {
-            try {
-              await api.post("/graphql", {
-                query: linkMutation,
-                variables: {
-                  fromId: newId,
-                  toId: toId,
-                  type: "RELATED_TO",
-                },
-              });
-            } catch (linkError) {
-              console.error(`Failed to link to node ${toId}:`, linkError);
-            }
+        for (const toId of selectedLinkIds) {
+          try {
+            await api.post("/graphql", {
+              query: linkMutation,
+              variables: { fromId: newNode.id, toId: toId, type: "RELATED_TO" },
+            });
+          } catch (linkError) {
+            console.error(`Failed to link to node ${toId}:`, linkError);
           }
         }
-        await fetchGraphData();
-        alert(`New node created with ID: ${newId}`);
-        console.log("Success:", confirmationData.data);
+        // Prepare new links for local state update
+        newLinks = selectedLinkIds.map((toId) => ({
+          source: newNode.id,
+          target: toId,
+          type: "RELATED_TO",
+          notes: "",
+        }));
       }
 
+      setGraphData((prevData) => ({
+        nodes: [...prevData.nodes, newNode],
+        links: [...prevData.links, ...newLinks],
+      }));
+
+      alert(`New node created with ID: ${newNode.id}`);
+      console.log("Success:", confirmationData.data);
+
+      // Reset form state
       setShowAddNodeForm(false);
       setNewNodeTitle("");
       setNewNodeNotes("");
@@ -163,29 +155,31 @@ function Home() {
   }
 
   return (
-    <div className="Home">
-      <Navbar />
-
-      <Graph data={graphData} />
-
-      <button className="create-node" onClick={() => setShowAddNodeForm(true)}>
+    <div className={styles.graphPage}>
+      <NavbarComponent />
+      <GraphComponent data={graphData} />
+      <button
+        className={styles.createNode}
+        onClick={() => setShowAddNodeForm(true)}
+      >
         Add Node
       </button>
 
       {showAddNodeForm && (
-        <div className="overlay" onClick={() => setShowAddNodeForm(false)}>
-          <div className="node-form" onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles.overlay}
+          onClick={() => setShowAddNodeForm(false)}
+        >
+          <div className={styles.nodeForm} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
-              className="node-form-close"
+              className={styles.nodeFormClose}
               onClick={() => setShowAddNodeForm(false)}
               aria-label="Close"
             >
               ×
             </button>
-
             <h3>Add Node</h3>
-
             <form onSubmit={handleAddNode}>
               <label>
                 Title
@@ -196,7 +190,6 @@ function Home() {
                   required
                 />
               </label>
-
               <label>
                 Content
                 <textarea
@@ -207,7 +200,6 @@ function Home() {
                   required
                 />
               </label>
-
               <div style={{ textAlign: "left", marginTop: 8 }}>
                 <strong>Link to existing nodes</strong>
                 <div
@@ -230,18 +222,16 @@ function Home() {
                   ))}
                 </div>
               </div>
-
-              <div className="node-form-actions">
+              <div className={styles.nodeFormActions}>
                 <button
                   type="submit"
-                  className="btn primary"
-                  onClick={(e) => handleAddNode(e)}
+                  className={`${styles.btn} ${styles.primary}`}
                 >
                   Add
                 </button>
                 <button
                   type="button"
-                  className="btn"
+                  className={styles.btn}
                   onClick={() => setShowAddNodeForm(false)}
                 >
                   Cancel
@@ -255,4 +245,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default GraphPage;

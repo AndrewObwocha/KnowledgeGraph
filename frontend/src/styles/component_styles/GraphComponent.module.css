@@ -1,12 +1,17 @@
-.graph-container {
+.graphContainer {
   background-color: #efefef;
   background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
     linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
   background-size: 40px 40px;
   border-radius: 8px;
   overflow: hidden;
-  width: 1300px;
-  height: 800px;
+  width: 100vw;
+  height: 80vh;
+}
+
+.links {
+}
+.nodes {
 }
 
 .link {
@@ -14,23 +19,23 @@
   stroke-width: 1.5px;
 }
 
-.node-group {
+.nodeGroup {
   cursor: grab;
 }
 
-.node-group:active {
+.nodeGroup:active {
   cursor: grabbing;
 }
 
-.node-shape {
+.nodeShape {
   stroke-width: 2px;
 }
 
-.node-label {
+.nodeLabel {
   fill: #f0f0f0;
   font-family: sans-serif;
   font-size: 12px;
-  pointer-events: none; /* Make text unselectable */
+  pointer-events: none;
 }
 
 /* Define some colors for the nodes */
