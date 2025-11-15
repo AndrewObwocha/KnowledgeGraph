@@ -1,11 +1,11 @@
-# Knowledge Graph Web Application
+# GraphMind Web Application
 
 ## Welcome!
-KnowledgeGraph is a full-stack web application for visually organizing and exploring information as a network of interconnected nodes and relationships. Designed to help users externalize and analyze complex knowledge, it features a modern React frontend, a robust Spring Boot backend, and a flexible GraphQL API powered by a local SQLite database.
+GraphMind is a full-stack web application for visually organizing and exploring information as a network of interconnected nodes and relationships. Designed to help users externalize and analyze complex knowledge, it features a modern React frontend, a robust Spring Boot backend, and a flexible GraphQL API powered by a local SQLite database.
 
 
-## KnowledgeGraph's Vision
-Information is most powerful when connected. KnowledgeGraph aims to make learning and research a compounding activity by mapping ideas, facts, and concepts as a graph—helping you see relationships, discover patterns, and grow your knowledge network over time.
+## GraphMind's Vision
+Information is most powerful when connected. GraphMind aims to make learning and research a compounding activity by mapping ideas, facts, and concepts as a graph—helping you see relationships, discover patterns, and grow your knowledge network over time.
 
 
 ## Features
@@ -81,7 +81,7 @@ This project is licensed under the MIT License.
 For further information, feel free to initiate contact:
 
 - **Email** — obwochandrew@gmail.com 
-- **GitHub:** [AndrewObwocha/KnowledgeGraph](https://github.com/AndrewObwocha/KnowledgeGraph)
+- **GitHub:** [AndrewObwocha/KnowledgeGraph](https://github.com/AndrewObwocha/GraphMind)
 
 ---
 
