@@ -81,7 +81,7 @@ This project is licensed under the MIT License.
 For further information, feel free to initiate contact:
 
 - **Email** — obwochandrew@gmail.com 
-- **GitHub:** [AndrewObwocha/KnowledgeGraph](https://github.com/AndrewObwocha/KnowledgeGraph)
+- **GitHub:** [AndrewObwocha/KnowledgeGraph](https://github.com/AndrewObwocha/GraphMind)
 
 ---
 
