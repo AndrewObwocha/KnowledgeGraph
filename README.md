@@ -1,14 +1,15 @@
 # GraphMind Web Application
 
 ## Welcome!
+
 GraphMind is a full-stack web application for visually organizing and exploring information as a network of interconnected nodes and relationships. Designed to help users externalize and analyze complex knowledge, it features a modern React frontend, a robust Spring Boot backend, and a flexible GraphQL API powered by a local SQLite database.
 
-
 ## GraphMind's Vision
+
 Information is most powerful when connected. GraphMind aims to make learning and research a compounding activity by mapping ideas, facts, and concepts as a graph—helping you see relationships, discover patterns, and grow your knowledge network over time.
 
-
 ## Features
+
 - **Interactive Graph Exploration** — Explore and manipulate nodes and relationships in a dynamic, visually engaging graph.
 
 - **Search & Discovery** — Find nodes by title or keyword for quick navigation.
@@ -21,7 +22,6 @@ Information is most powerful when connected. GraphMind aims to make learning and
 
 - **GraphQL API** — Flexible queries and mutations for frontend and external integrations.
 
-
 ## Technologies
 
 - **React** - Handles the user presentation and experience in the frontend
@@ -29,27 +29,31 @@ Information is most powerful when connected. GraphMind aims to make learning and
 - **GraphQL API** — Serves as a query and mutation handler between frontend and backend
 - **JWT** — Serves as primary authentication handler
 - **SQLite Database** — Manages local data storage, including nodes and relationships
- 
+
 ## Setup & Running
 
 **Pre-Requisites**
+
 - Download and install Node.js from the official website - [Node.js](https://nodejs.org/en/download/)
 - Download and install Java 24 from the official website - [Java 24](https://www.oracle.com/java/technologies/downloads/)
 - Download and install the Java Virtual Machine from Oracle - [Java Virtual Machine](https://www.oracle.com/java/technologies/downloads/)
 
 **Setup**
+
 1. **Clone the repository**
    ```sh
-   git clone https://github.com/{yourUsername}/KnowledgeGraph.git
-   cd KnowledgeGraph
+   git clone https://github.com/{yourUsername}/GraphMind.git
+   cd GraphMind
    ```
 2. **Install frontend dependencies**
+
    ```sh
    cd frontend
    npm install
    ```
 
 3. **Build and run the backend**
+
    ```sh
    cd ../backend
    ./gradlew build
@@ -57,6 +61,7 @@ Information is most powerful when connected. GraphMind aims to make learning and
    ```
 
 4. **Run the frontend**
+
    ```sh
    cd ../frontend
    npm run dev
@@ -80,9 +85,9 @@ This project is licensed under the MIT License.
 
 For further information, feel free to initiate contact:
 
-- **Email** — obwochandrew@gmail.com 
-- **GitHub:** [AndrewObwocha/KnowledgeGraph](https://github.com/AndrewObwocha/GraphMind)
+- **Email** — obwochandrew@gmail.com
+- **GitHub:** [AndrewObwocha/GraphMind](https://github.com/AndrewObwocha/GraphMind)
 
 ---
 
-*Happy mapping!*
+_Happy mapping!_
