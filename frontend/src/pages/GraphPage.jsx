@@ -195,6 +195,42 @@ function GraphPage() {
     return neighbors;
   })();
 
+  async function handleDeleteNode(id) {
+    if (!id) return;
+    const ok = window.confirm(
+      `Delete node "${
+        graphData.nodes.find((n) => n.id === id)?.title || id
+      }"? This will remove all its links.`
+    );
+    if (!ok) return;
+    try {
+      const mutation = `mutation DeleteNode($id: ID!) { deleteNode(id: $id) }`;
+      const res = await api.post("/graphql", {
+        query: mutation,
+        variables: { id },
+      });
+      if (res.data.errors) {
+        console.error("Delete errors:", res.data.errors);
+        alert("Failed to delete node. See console for details.");
+        return;
+      }
+      const deletedId = res.data.data.deleteNode;
+      setGraphData((prev) => ({
+        nodes: prev.nodes.filter((n) => n.id !== deletedId),
+        links: prev.links.filter(
+          (l) =>
+            resolveId(l.source) !== deletedId &&
+            resolveId(l.target) !== deletedId
+        ),
+      }));
+      setSelectedNodeId(null);
+      alert(`Deleted node ${deletedId}`);
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Network error while deleting node.");
+    }
+  }
+
   return (
     <div className={styles.graphPage}>
       <NavbarComponent />
@@ -360,6 +396,40 @@ function GraphPage() {
                 </ul>
               )}
             </section>
+            <div
+              style={{
+                marginTop: 18,
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 12,
+              }}
+            >
+              <button
+                onClick={() => setSelectedNodeId(null)}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 8,
+                  border: "1px solid #ccc",
+                  background: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => handleDeleteNode(selectedNode.id)}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: "#d9534f",
+                  color: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                Delete Node
+              </button>
+            </div>
           </div>
         </div>
       )}
