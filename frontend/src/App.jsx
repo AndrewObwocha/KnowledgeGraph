@@ -6,6 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import GraphPage from "./pages/GraphPage";
 import TablePage from "./pages/TablePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import UserPage from "./pages/UserPage";
 
 function Logout() {
   localStorage.clear();
@@ -34,6 +35,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TablePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/userview"
+          element={
+            <ProtectedRoute>
+              <UserPage />
             </ProtectedRoute>
           }
         />

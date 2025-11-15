@@ -3,6 +3,7 @@ import NavbarComponent from "../components/NavbarComponent";
 import GraphComponent from "../components/GraphComponent";
 import api from "../helpers/api";
 import styles from "../styles/page_styles/GraphPage.module.css";
+import authStyles from "../styles/component_styles/AuthFormComponent.module.css";
 
 function GraphPage() {
   const [showAddNodeForm, setShowAddNodeForm] = useState(false);
@@ -173,26 +174,26 @@ function GraphPage() {
     ? graphData.nodes.find((n) => n.id === selectedNodeId)
     : null;
 
-  const selectedNodeLinkedNodes = selectedNodeId
-    ? graphData.links
-        .filter(
-          (l) =>
-            resolveId(l.source) === selectedNodeId ||
-            resolveId(l.target) === selectedNodeId
-        )
-        .map((l) => {
-          const otherId =
-            resolveId(l.source) === selectedNodeId
-              ? resolveId(l.target)
-              : resolveId(l.source);
-          return (
-            graphData.nodes.find((n) => n.id === otherId) || {
-              id: otherId,
-              title: otherId,
-            }
-          );
-        })
-    : [];
+  // Compute only direct neighbors (no transitive expansion) and dedupe
+  const selectedNodeLinkedNodes = (() => {
+    if (!selectedNodeId) return [];
+    const neighborIdSet = new Set();
+    for (const l of graphData.links) {
+      const s = resolveId(l.source);
+      const t = resolveId(l.target);
+      if (s === selectedNodeId && t !== selectedNodeId) neighborIdSet.add(t);
+      if (t === selectedNodeId && s !== selectedNodeId) neighborIdSet.add(s);
+    }
+    const neighbors = [];
+    for (const id of neighborIdSet) {
+      const node = graphData.nodes.find((n) => n.id === id) || {
+        id,
+        title: id,
+      };
+      neighbors.push(node);
+    }
+    return neighbors;
+  })();
 
   return (
     <div className={styles.graphPage}>
@@ -287,68 +288,80 @@ function GraphPage() {
       )}
 
       {selectedNode && (
-        <aside
-          className={styles.nodeDetails}
+        <div
+          onClick={() => setSelectedNodeId(null)}
           style={{
             position: "fixed",
-            right: 20,
-            top: 80,
-            width: 320,
-            maxHeight: "70vh",
-            overflowY: "auto",
-            background: "#fff",
-            border: "1px solid #ddd",
-            borderRadius: 8,
-            padding: 16,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+            inset: 0,
+            background: "rgba(0,0,0,0.35)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             zIndex: 9999,
+            padding: 20,
           }}
         >
-          <button
-            onClick={() => setSelectedNodeId(null)}
-            style={{
-              float: "right",
-              border: "none",
-              background: "transparent",
-              fontSize: 18,
-            }}
-            aria-label="Close"
+          <div
+            className={authStyles.authFormContainer}
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: 600, width: "100%", color: "#000" }}
           >
-            ×
-          </button>
-          <h3 style={{ marginTop: 4 }}>
-            {selectedNode.title || selectedNode.id}
-          </h3>
-          <div style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
-            {selectedNode.description}
+            <button
+              onClick={() => setSelectedNodeId(null)}
+              style={{
+                float: "right",
+                border: "none",
+                background: "transparent",
+                fontSize: 20,
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h1 className={authStyles.formTitle} style={{ marginTop: 4 }}>
+              {selectedNode.title || selectedNode.id}
+            </h1>
+            <section style={{ marginTop: 8 }}>
+              <h4 style={{ marginBottom: 6 }}>Notes</h4>
+              <div style={{ whiteSpace: "pre-wrap", color: "#000" }}>
+                {selectedNode.description || "(No notes)"}
+              </div>
+            </section>
+
+            <section
+              style={{
+                marginTop: 18,
+                borderTop: "1px solid #e6e6e6",
+                paddingTop: 12,
+              }}
+            >
+              <h4 style={{ marginBottom: 6 }}>Linked nodes</h4>
+              {selectedNodeLinkedNodes.length === 0 && (
+                <div style={{ marginTop: 6 }}>No linked nodes</div>
+              )}
+              {selectedNodeLinkedNodes.length > 0 && (
+                <ul style={{ marginTop: 8, paddingLeft: 16 }}>
+                  {selectedNodeLinkedNodes.map((ln) => (
+                    <li key={ln.id} style={{ marginBottom: 6 }}>
+                      <button
+                        onClick={() => setSelectedNodeId(ln.id)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#0366d6",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        {ln.title || ln.id}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           </div>
-          <div style={{ marginTop: 12 }}>
-            <strong>Linked nodes</strong>
-            {selectedNodeLinkedNodes.length === 0 && (
-              <div style={{ marginTop: 6 }}>No linked nodes</div>
-            )}
-            {selectedNodeLinkedNodes.length > 0 && (
-              <ul style={{ marginTop: 8, paddingLeft: 16 }}>
-                {selectedNodeLinkedNodes.map((ln) => (
-                  <li key={ln.id} style={{ marginBottom: 6 }}>
-                    <button
-                      onClick={() => setSelectedNodeId(ln.id)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#0366d6",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
-                    >
-                      {ln.title || ln.id}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </aside>
+        </div>
       )}
     </div>
   );
