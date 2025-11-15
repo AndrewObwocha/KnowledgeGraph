@@ -19,7 +19,7 @@ const generateBlobPath = (radius = 50, numAnchors = 16, variance = 0.25) => {
   return d3.line().curve(d3.curveCatmullRomClosed)(points);
 };
 
-const Graph = ({ data }) => {
+const Graph = ({ data, onNodeClick }) => {
   const svgRef = useRef();
   const gRef = useRef();
   const simulationRef = useRef();
@@ -78,7 +78,11 @@ const Graph = ({ data }) => {
           const g = enter
             .append("g")
             .attr("class", styles.nodeGroup)
-            .call(drag);
+            .call(drag)
+            .style("cursor", "pointer")
+            .on("click", (event, d) => {
+              if (onNodeClick) onNodeClick(d.id);
+            });
           g.append("path")
             .attr(
               "class",

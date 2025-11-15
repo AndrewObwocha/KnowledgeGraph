@@ -10,6 +10,7 @@ function GraphPage() {
   const [newNodeNotes, setNewNodeNotes] = useState("");
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [selectedLinkIds, setSelectedLinkIds] = useState([]);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const fetchGraphData = useCallback(async () => {
     try {
@@ -160,10 +161,43 @@ function GraphPage() {
     setSelectedLinkIds(selected);
   }
 
+  function handleNodeClick(id) {
+    setSelectedNodeId(id);
+  }
+
+  function resolveId(val) {
+    return val && typeof val === "object" ? val.id : val;
+  }
+
+  const selectedNode = selectedNodeId
+    ? graphData.nodes.find((n) => n.id === selectedNodeId)
+    : null;
+
+  const selectedNodeLinkedNodes = selectedNodeId
+    ? graphData.links
+        .filter(
+          (l) =>
+            resolveId(l.source) === selectedNodeId ||
+            resolveId(l.target) === selectedNodeId
+        )
+        .map((l) => {
+          const otherId =
+            resolveId(l.source) === selectedNodeId
+              ? resolveId(l.target)
+              : resolveId(l.source);
+          return (
+            graphData.nodes.find((n) => n.id === otherId) || {
+              id: otherId,
+              title: otherId,
+            }
+          );
+        })
+    : [];
+
   return (
     <div className={styles.graphPage}>
       <NavbarComponent />
-      <GraphComponent data={graphData} />
+      <GraphComponent data={graphData} onNodeClick={handleNodeClick} />
       <button
         className={styles.createNode}
         onClick={() => setShowAddNodeForm(true)}
@@ -250,6 +284,71 @@ function GraphPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {selectedNode && (
+        <aside
+          className={styles.nodeDetails}
+          style={{
+            position: "fixed",
+            right: 20,
+            top: 80,
+            width: 320,
+            maxHeight: "70vh",
+            overflowY: "auto",
+            background: "#fff",
+            border: "1px solid #ddd",
+            borderRadius: 8,
+            padding: 16,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+            zIndex: 9999,
+          }}
+        >
+          <button
+            onClick={() => setSelectedNodeId(null)}
+            style={{
+              float: "right",
+              border: "none",
+              background: "transparent",
+              fontSize: 18,
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <h3 style={{ marginTop: 4 }}>
+            {selectedNode.title || selectedNode.id}
+          </h3>
+          <div style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+            {selectedNode.description}
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <strong>Linked nodes</strong>
+            {selectedNodeLinkedNodes.length === 0 && (
+              <div style={{ marginTop: 6 }}>No linked nodes</div>
+            )}
+            {selectedNodeLinkedNodes.length > 0 && (
+              <ul style={{ marginTop: 8, paddingLeft: 16 }}>
+                {selectedNodeLinkedNodes.map((ln) => (
+                  <li key={ln.id} style={{ marginBottom: 6 }}>
+                    <button
+                      onClick={() => setSelectedNodeId(ln.id)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#0366d6",
+                        cursor: "pointer",
+                        padding: 0,
+                      }}
+                    >
+                      {ln.title || ln.id}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
       )}
     </div>
   );
