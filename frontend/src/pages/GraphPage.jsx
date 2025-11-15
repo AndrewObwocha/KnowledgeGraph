@@ -154,6 +154,12 @@ function GraphPage() {
     );
   }
 
+  function handleSelectChange(e) {
+    const options = Array.from(e.target.options || []);
+    const selected = options.filter((o) => o.selected).map((o) => o.value);
+    setSelectedLinkIds(selected);
+  }
+
   return (
     <div className={styles.graphPage}>
       <NavbarComponent />
@@ -203,23 +209,27 @@ function GraphPage() {
               <div style={{ textAlign: "left", marginTop: 8 }}>
                 <strong>Link to existing nodes</strong>
                 <div
-                  style={{ maxHeight: 160, overflowY: "auto", marginTop: 8 }}
+                  style={{ maxHeight: 200, overflowY: "auto", marginTop: 8 }}
                 >
                   {graphData.nodes.length === 0 && <div>No existing nodes</div>}
-                  {graphData.nodes.map((n) => (
-                    <label
-                      key={n.id}
-                      style={{ display: "block", marginBottom: 6 }}
+                  {graphData.nodes.length > 0 && (
+                    <select
+                      multiple
+                      value={selectedLinkIds}
+                      onChange={handleSelectChange}
+                      style={{ width: "100%", minHeight: 120 }}
+                      aria-label="Select nodes to link"
                     >
-                      <input
-                        type="checkbox"
-                        checked={selectedLinkIds.includes(n.id)}
-                        onChange={() => toggleSelectLink(n.id)}
-                        style={{ marginRight: 8 }}
-                      />
-                      {n.title || n.id}
-                    </label>
-                  ))}
+                      {graphData.nodes.map((n) => (
+                        <option key={n.id} value={n.id}>
+                          {n.title || n.id}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  <div style={{ fontSize: 12, color: "#666", marginTop: 6 }}>
+                    Hold Cmd / Ctrl (multi-key) to select multiple nodes.
+                  </div>
                 </div>
               </div>
               <div className={styles.nodeFormActions}>
